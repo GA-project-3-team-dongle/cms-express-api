@@ -22,6 +22,19 @@ const create = (req, res, next) => {
     .catch(next)
 }
 
+// A signed in user will be able to get ALL posts
+// (from other users also)
+const index = (req, res, next) => {
+  Post.find()
+    .then(posts => res.json({
+      posts: posts.map((e) =>
+        e.toJSON({ virtuals: true, user: req.user }))
+    }))
+    .catch(next)
+}
+
+// Like index, a signed in user will have access to ANY post
+// including those created by other users
 const show = (req, res) => {
   res.json({
     // request.user just for JSON display?
@@ -45,6 +58,7 @@ const destroy = (req, res, next) => {
 
 module.exports = controller({
   create,
+  index,
   show,
   update,
   destroy
