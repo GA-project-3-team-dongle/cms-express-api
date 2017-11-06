@@ -29,7 +29,6 @@ const indexUserPages = (req, res, next) => {
 
 // One page from any user
 const show = (req, res) => {
-  console.log('params id = ' + req.params.id)
   res.json({
     page: req.page.toJSON({ virtuals: true, user: req.user })
   })
@@ -37,14 +36,9 @@ const show = (req, res) => {
 
 // Create 1 page with sections
 const create = (req, res, next) => {
-  console.log('creating page')
-  console.log('request body title ===' + req.body.page.title)
-  console.log('user id ===' + req.user._id)
   const page = Object.assign(req.body.page, {
     _owner: req.user._id
   })
-  console.log('page === ' + page)
-  console.log('page.sections.heading === ' + page.sections.heading)
   Page.create(page)
     .then(page =>
       res.status(201)
@@ -56,8 +50,9 @@ const create = (req, res, next) => {
 
 const update = (req, res, next) => {
   const updatedPageData = req.body.page
+  // DELETE props that are empty to avoid unintentional
+  // field deletes
   for (const prop in updatedPageData) {
-    console.log(updatedPageData[prop])
     if (updatedPageData[prop] === '') {
       delete updatedPageData[prop]
     }
